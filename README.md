@@ -1,2 +1,2 @@
 # tensorflow-community-wheels
-Place to upload links to TensorFlow wheels
+TLDR; if you built a custom TensorFlow wheel, upload is somewhere, and post a link under Issues
