@@ -1,7 +1,8 @@
 # tensorflow-community-wheels
-TLDR; if you built a custom TensorFlow wheel, upload is somewhere, and post a link under Issues
+TLDR; if you built a custom TensorFlow wheel, upload is somewhere, and post a link under Issues.
+If you find a wheel useful, respond to the issue (ie, GitHub emoji), so that people know to keep maintaining that configuration.
 
-I post my building workflow and occasinal wheels that I build for my config in hope that some people will reuse them and start uploading wheels as well
+Below is an example of building/uploading a wheel
 
 Configure is automated with https://github.com/yaroslavvb/stuff/blob/master/configure_tf.sh
 Steps for configuring bazel env: https://github.com/tensorflow/tensorflow/issues/7443#issuecomment-279182613
