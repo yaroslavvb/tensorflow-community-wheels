@@ -1,5 +1,5 @@
 # tensorflow-community-wheels
-TLDR; if you built a custom TensorFlow wheel, upload is somewhere, and post a link under Issues.
+TLDR; if you built a custom TensorFlow wheel, upload it somewhere, and post a link under Issues.
 If you find a wheel useful, respond to the issue (ie, GitHub emoji), so that people know to keep maintaining that configuration.
 
 Below is an example of building/uploading a wheel
