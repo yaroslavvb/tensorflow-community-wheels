@@ -5,7 +5,7 @@ If you find a wheel useful, respond to the issue (ie, GitHub emoji), so that peo
 Below is an example of building/uploading a wheel
 
 Configure is automated with https://github.com/yaroslavvb/stuff/blob/master/configure_tf.sh
-Steps for configuring bazel env: https://github.com/tensorflow/tensorflow/issues/7443#issuecomment-279182613
+Steps for configuring bazel env: https://medium.com/@yaroslavvb/setting-up-tensorflow-dev-environment-sep-19-fd27b321de14 (previous [version](https://github.com/tensorflow/tensorflow/issues/7443#issuecomment-279182613))
 
 # Linux one-time build
 ```
