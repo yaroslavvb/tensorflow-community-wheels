@@ -2,44 +2,47 @@
 TLDR; if you built a custom TensorFlow wheel, upload it somewhere, and post a link under Issues.
 If you find a wheel useful, respond to the issue (ie, GitHub emoji), so that people know to keep maintaining that configuration.
 
-Below is an example of building/uploading a wheel
+Below is an example of building a wheel.
 
-Configure is automated with https://github.com/yaroslavvb/stuff/blob/master/configure_tf.sh
-Steps for configuring bazel env: https://medium.com/@yaroslavvb/setting-up-tensorflow-dev-environment-sep-19-fd27b321de14 (previous [version](https://github.com/tensorflow/tensorflow/issues/7443#issuecomment-279182613))
+Before build you need to install [docker-ce](https://docs.docker.com/install/) and [nvidia-docker](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)).
 
-# Linux one-time build
+
+# Docker powered build
 ```
-tmux new-session -s bazel -n 0
-cd ~/git2/tensorflow
-source activate bazel
+# create directory for output wheel
+mkdir -p ~/projects/tf
 
-git fetch --all
-git rebase tf/master
+# pull docker image
+docker pull tensorflow/tensorflow:devel-gpu-py3
 
-~/g/git/stuff/configure_tf.sh
+# run docker
+docker run --gpus all -it  -v ~/projects/tf:/my-devel tensorflow/tensorflow:devel-gpu-py3 bash
 
-export LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH"
-export flags="--config=opt --config=cuda -k"
-export tag=xlamem
-export date=feb22
+# fix bazel version
+# (for TF v1.14 need bazel 0.25.2,
+#  for TF v1.3 and lower - need bazel 0.21.0)
+rm -rf /usr/local/bin/bazel
+wget -O /bazel/installer.sh "https://github.com/bazelbuild/bazel/releases/download/0.25.2/bazel-0.25.2-installer-linux-x86_64.sh"
+chmod +x /bazel/installer.sh
+/bazel/installer.sh
 
-bazel build $flags -k //tensorflow/tools/pip_package:build_pip_package
-bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
-mkdir -p ~/tfbins/$date.$tag
-cp `find /tmp/tensorflow_pkg -type f ` ~/tfbins/$date.$tag
-bazel test $flags //tensorflow/...
-bazel test $flags -j 1 //tensorflow/...
-bazel build $flags //tensorflow/...
+# go to TF source folder
+cd /tensorflow_src
 
+# checkout to the required version
+git checkout v1.14.0
 
-export wheel=`find ~/tfbins/$date.$tag -type f`
-export basename=`find ~/tfbins/$date.$tag -type f -printf "%f\n"`
-cd ~/tfbins/$date.$tag
-fullname=$date.$tag.$basename
-ln -s $basename $fullname
-export bucket=tensorflow-community-wheels
-gsutil cp $fullname gs://$bucket
-gsutil acl set public-read gs://$bucket/$fullname
+# set some variables
+# see full in Dockerfile: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tools/dockerfiles/dockerfiles/devel-gpu.Dockerfile
+export TF_ENABLE_XLA=1
+export CC_OPT_FLAGS="-march=native -mno-avx"
 
-echo https://storage.googleapis.com/tensorflow-community-wheels/$fullname
+# yes to all (enter, enter, enter, ...)
+./configure
+
+# run compilation (very long process)
+bazel build --config=opt --config=cuda --noincompatible_strict_action_env //tensorflow/tools/pip_package:build_pip_package
+
+# get wheel
+bazel-bin/tensorflow/tools/pip_package/build_pip_package /my-devel/tensorflow_pkg1
 ```
